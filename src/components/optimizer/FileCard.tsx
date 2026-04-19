@@ -41,8 +41,6 @@ export interface FileCardProps {
   onOptimizeSlices: (fileData: UploadedFile, slices: Slice[]) => void
 }
 
-const extOf = (name: string) => (name.split('.').pop() ?? '').toUpperCase()
-
 // Derive the "result" extension (what the optimized file will be named)
 const outputExt = (fileData: UploadedFile): string => {
   if (fileData.type === 'pdf') return 'PDF'
@@ -84,9 +82,7 @@ export const FileCard = memo(function FileCard({
   const done = !!optimized || !!optimizedSplitSlices
   const sliced = !!splitSlices
   const keptOriginal = !!optimized?.keptOriginal
-  const inputExt = extOf(fileData.file.name)
   const outExt = outputExt(fileData)
-  const extChanged = !keptOriginal && inputExt !== outExt && fileData.type !== 'pdf'
   const canSplit = fileData.type === 'image' && ((fileData.originalHeight ?? 0) > 4000 || (fileData.originalWidth ?? 0) > 4000)
 
   // Pre-flight estimate (shown when idle + file is slow enough to warrant it)
@@ -164,11 +160,6 @@ export const FileCard = memo(function FileCard({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 min-w-0">
               <h3 className="font-medium text-sm truncate">{fileData.file.name}</h3>
-              {done && extChanged && (
-                <span className="shrink-0 inline-flex items-center gap-1 text-[10px] font-mono text-primary bg-primary/10 border border-primary/25 rounded px-1.5 py-0.5">
-                  {inputExt} → {outExt}
-                </span>
-              )}
             </div>
 
             <div className="mt-1 text-xs text-muted-foreground min-h-[18px] relative">
@@ -193,7 +184,7 @@ export const FileCard = memo(function FileCard({
                 </div>
               ) : optimized && !keptOriginal ? (
                 <div key="done" className="flex items-center gap-2 flex-wrap min-w-0 animate-[fc-enter_240ms_ease-out]">
-                  <span className="tabular-nums line-through decoration-muted-foreground/40">
+                  <span className="hidden sm:inline tabular-nums line-through decoration-muted-foreground/40">
                     {formatSize(fileData.file.size)}
                   </span>
                   <span className="text-primary tabular-nums font-semibold">
@@ -204,8 +195,8 @@ export const FileCard = memo(function FileCard({
                   </span>
                   {statusCopy && (
                     <>
-                      <span className="text-muted-foreground/50">·</span>
-                      <span className="inline-flex items-center gap-1 text-primary">
+                      <span className="hidden sm:inline text-muted-foreground/50">·</span>
+                      <span className="hidden sm:inline-flex items-center gap-1 text-primary">
                         <Check className="h-3 w-3" />
                         {statusCopy}
                       </span>
