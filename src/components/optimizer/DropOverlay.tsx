@@ -42,7 +42,7 @@ export function DropOverlay({
     <div
       {...getRootProps()}
       className={`fixed inset-0 transition-opacity duration-200 ${
-        active ? 'z-50 pointer-events-auto opacity-100' : '-z-10 pointer-events-none opacity-0'
+        active ? 'z-70 pointer-events-auto opacity-100' : '-z-10 pointer-events-none opacity-0'
       }`}
     >
       <input {...getInputProps()} />

@@ -89,7 +89,7 @@ export function Hero({ onChoose, error }: HeroProps) {
                 </button>
               </div>
 
-              <p className="mt-3 text-center text-sm italic font-serif text-foreground/80">
+              <p className="hidden sm:block mt-3 text-center text-sm italic font-serif text-foreground/80">
                 or drop anywhere
               </p>
 
