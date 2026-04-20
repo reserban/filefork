@@ -45,6 +45,8 @@ export default function Optimizer() {
     const initial = readInitialUrlPrefs()
     initialPrefsRef.current = initial
     if (initial.preset && ['web', 'keep'].includes(initial.preset)) {
+      // One-shot sync from window.location on mount — no cascade.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setConversionPresetId(initial.preset)
     }
   }, [])
@@ -92,6 +94,8 @@ export default function Optimizer() {
     const needsFFmpeg = files.some(f => f.type === 'video' || f.type === 'audio')
 
     if (needsFFmpeg && videoProcessingAvailable === null && !ffmpegLoading) {
+      // Gate: starts a one-time FFmpeg load when video/audio first appears.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFfmpegLoading(true)
       loadFFmpeg()
         .then(() => {
@@ -508,7 +512,10 @@ export default function Optimizer() {
     }
   }, [])
 
-  const downloadSplitZip = useCallback(downloadSlicesZip, [])
+  const downloadSplitZip = useCallback(
+    (fileData: UploadedFile, slices: Slice[]) => downloadSlicesZip(fileData, slices),
+    [],
+  )
 
   // Reset all processing state for a single file back to original
   const resetFile = useCallback((id: string) => {

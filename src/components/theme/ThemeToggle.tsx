@@ -11,6 +11,9 @@ export function ThemeToggle() {
   const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
+    // One-shot mount gate so the real theme (read client-side) renders only
+    // after hydration — keeps SSR/client markup identical on first paint.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true)
   }, [])
 

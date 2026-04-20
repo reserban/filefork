@@ -5,6 +5,7 @@ import {
   Check,
   Download,
   FileText,
+  Image as ImageIcon,
   Loader2,
   Music,
   Package,
@@ -95,9 +96,7 @@ export const FileCard = memo(function FileCard({
   const [now, setNow] = useState(0)
   useEffect(() => {
     if (!busy) return
-    // Initial tick + 1Hz refresh. Both writes are to external-system-synced
-    // time; the setInterval callback is the primary subscription, and the
-    // initial call just seeds it without waiting a full second.
+    // Seed immediately so the first render already has a real time, then tick at 1Hz.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setNow(Date.now())
     const id = setInterval(() => setNow(Date.now()), 1000)
@@ -143,8 +142,7 @@ export const FileCard = memo(function FileCard({
               ) : isAudio ? (
                 <Music className="h-6 w-6 text-muted-foreground" strokeWidth={1.5} />
               ) : fileData.type === 'image' ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={fileData.preview} alt="" className="w-full h-full object-cover" />
+                <ImagePreview src={fileData.preview} />
               ) : (
                 <Video className="h-6 w-6 text-muted-foreground" strokeWidth={1.5} />
               )}
@@ -419,3 +417,18 @@ export const FileCard = memo(function FileCard({
     </div>
   )
 })
+
+/**
+ * Square thumbnail that gracefully degrades to an image icon when the browser
+ * can't decode the source — e.g. HEIC in Chrome/Firefox, broken TIFF, etc.
+ */
+function ImagePreview({ src }: { src: string }) {
+  const [failed, setFailed] = useState(false)
+  if (failed || !src) {
+    return <ImageIcon className="h-6 w-6 text-muted-foreground" strokeWidth={1.5} />
+  }
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={src} alt="" className="w-full h-full object-cover" onError={() => setFailed(true)} />
+  )
+}
